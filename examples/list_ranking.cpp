@@ -6,7 +6,7 @@
 #include "str.hpp"
 
 /**
- * List Ranking，CREW 模型，处理器数 O(n)，时间复杂度 O(logn)
+ * List Ranking, CREW model, O(n) processors, O(logn) time complexity
  */
 std::pair<std::vector<size_t>, pram::Stat> list_ranking_impl(const std::vector<int>& data) {
     size_t n = data.size();

@@ -6,7 +6,7 @@
 #include "str.hpp"
 
 /**
- * Rank Sort，CRCW_Add 模型，处理器数 O(n^2)，时间复杂度 O(1)
+ * Rank Sort, CRCW_Add model, O(n^2) processors, O(1) time complexity
  */
 std::pair<std::vector<int>, pram::Stat> rank_sort_impl(const std::vector<int>& data) {
     size_t n = data.size();

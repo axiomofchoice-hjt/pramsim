@@ -40,46 +40,46 @@ class SharedArray : public Memory {
     void commit_round() override {
         auto key = [](const auto& req) { return std::pair{req.internal_ref, req.pid}; };
 
-        // 排序读请求和去重，一个处理器读同一地址只算一次读
+        // Sort read requests and deduplicate - a processor reading the same address only counts once
         std::ranges::sort(read_requests_, {}, key);
         read_requests_.erase(std::ranges::unique(read_requests_, {}, key).begin(), read_requests_.end());
 
-        // 排序写请求
+        // Sort write requests
         std::ranges::sort(write_requests_, {}, key);
 
-        // 检查读写冲突
+        // Check read-write conflicts
         check_read_write_conflict(read_requests_, write_requests_);
 
         switch (model_.read_policy) {
-            case impl::ReadPolicy::Exclusive:  // 处理互斥读
+            case impl::ReadPolicy::Exclusive:  // Handle exclusive read
                 impl::check_exclusive_read(read_requests_);
                 break;
-            case impl::ReadPolicy::Concurrent:  // 处理并发读
+            case impl::ReadPolicy::Concurrent:  // Handle concurrent read
                 break;
         }
 
         switch (model_.write_policy) {
-            case impl::WritePolicy::Exclusive:  // 处理互斥写
+            case impl::WritePolicy::Exclusive:  // Handle exclusive write
                 impl::check_exclusive_write(write_requests_);
                 impl::apply_write(write_requests_);
                 break;
-            case impl::WritePolicy::Common:  // 处理公共写
+            case impl::WritePolicy::Common:  // Handle common write
                 impl::check_common_write(write_requests_);
                 impl::apply_write(write_requests_);
                 break;
-            case impl::WritePolicy::Arbitrary:  // 处理任意写
+            case impl::WritePolicy::Arbitrary:  // Handle arbitrary write
                 impl::apply_arbitrary_write(write_requests_, context_);
                 break;
-            case impl::WritePolicy::Priority:  // 处理优先级写
+            case impl::WritePolicy::Priority:  // Handle priority write
                 impl::apply_priority_write(write_requests_);
                 break;
-            case impl::WritePolicy::Add:  // 处理合并写 加法
+            case impl::WritePolicy::Add:  // Handle combining write (addition)
                 impl::apply_combining_write(write_requests_, std::plus<T>{});
                 break;
-            case impl::WritePolicy::Max:  // 处理合并写 取最大值
+            case impl::WritePolicy::Max:  // Handle combining write (maximum)
                 impl::apply_combining_write(write_requests_, [](const T& a, const T& b) { return std::max(a, b); });
                 break;
-            case impl::WritePolicy::Min:  // 处理合并写 取最小值
+            case impl::WritePolicy::Min:  // Handle combining write (minimum)
                 impl::apply_combining_write(write_requests_, [](const T& a, const T& b) { return std::min(a, b); });
                 break;
         }

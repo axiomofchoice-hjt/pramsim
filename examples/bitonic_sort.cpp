@@ -6,9 +6,9 @@
 #include "str.hpp"
 
 /**
- * 双调排序变种，CREW 模型，处理器数 O(n)，时间复杂度 O(log^2{n})
- * 这个变种可以优雅处理非 2 的幂次的输入规模。
- * n = 8 的排序网络如下所示：
+ * Bitonic sort variant, CREW model, O(n) processors, O(log^2{n}) time complexity
+ * This variant can gracefully handle input sizes that are not powers of 2.
+ * Sorting network for n = 8 is shown below:
  * 0: --#--------#----#--------#--------#----#----
  * 1: --#--------|-#--#--------|-#------|-#--#----
  * 2: ----#------|-#----#------|-|-#----#-|----#--

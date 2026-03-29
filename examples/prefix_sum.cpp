@@ -6,7 +6,7 @@
 #include "str.hpp"
 
 /**
- * 前缀和，CREW 模型，处理器数 O(n)，时间复杂度 O(logn)
+ * Prefix sum, CREW model, O(n) processors, O(logn) time complexity
  */
 std::pair<std::vector<int>, pram::Stat> prefix_sum_impl(const std::vector<int>& data) {
     size_t n = data.size();

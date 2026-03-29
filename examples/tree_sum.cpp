@@ -6,7 +6,7 @@
 #include "str.hpp"
 
 /**
- * 树形求和，CREW 模型，处理器数 O(n)，时间复杂度 O(logn)
+ * Tree sum, CREW model, O(n) processors, O(logn) time complexity
  */
 std::pair<int, pram::Stat> tree_sum_impl(const std::vector<int>& data) {
     size_t n = data.size();
