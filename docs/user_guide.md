@@ -2,7 +2,7 @@
 
 ## 1. 基本结构
 
-1. 创建一个 Machine。
+1. 用 `pram::Machine machine{...};` 创建一个 Machine。
 2. 用 `machine.allocate(...)` 创建若干个 SharedArray。
 3. 用 `machine.parallel(...)` 启动并行程序。
 
