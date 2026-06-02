@@ -12,7 +12,9 @@
 namespace pram {
 struct Task {
     struct promise_type {
-        Task get_return_object() { return Task{std::coroutine_handle<promise_type>::from_promise(*this)}; }
+        Task get_return_object() {
+            return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
+        }
         std::suspend_always initial_suspend() { return {}; }
         std::suspend_always final_suspend() noexcept { return {}; }
         void return_void() {}
@@ -60,8 +62,10 @@ struct Stat {
 
 class Machine {
    public:
-    Machine(size_t n_processors) : model_{CREW}, context_{std::make_unique<Context>(n_processors)} {}
-    Machine(size_t n_processors, Model model) : model_(model), context_{std::make_unique<Context>(n_processors)} {}
+    Machine(size_t n_processors)
+        : model_{CREW}, context_{std::make_unique<Context>(n_processors)} {}
+    Machine(size_t n_processors, Model model)
+        : model_(model), context_{std::make_unique<Context>(n_processors)} {}
 
     template <typename T>
     SharedArray<T>& allocate(size_t length, T value) {
@@ -82,8 +86,8 @@ class Machine {
     template <std::invocable<size_t> F>
     void parallel(F&& func) {
         bool active = true;
-        auto tasks = std::views::iota(size_t{0}, context_->n_processors) | std::views::transform(func) |
-                     std::ranges::to<std::vector>();
+        auto tasks = std::views::iota(size_t{0}, context_->n_processors) |
+                     std::views::transform(func) | std::ranges::to<std::vector>();
 
         while (active) {
             active = false;
@@ -105,12 +109,14 @@ class Machine {
     }
 
     Stat stat() const {
-        size_t n_reads = std::ranges::fold_left(
-            memories_, 0ULL, [](size_t acc, const std::unique_ptr<Memory>& mem) { return acc + mem->n_reads(); });
-        size_t n_writes = std::ranges::fold_left(
-            memories_, 0ULL, [](size_t acc, const std::unique_ptr<Memory>& mem) { return acc + mem->n_writes(); });
-        return {
-            .n_processors = context_->n_processors, .n_rounds = n_rounds_, .n_reads = n_reads, .n_writes = n_writes};
+        size_t n_reads = std::ranges::fold_left(memories_, 0ULL,
+            [](size_t acc, const std::unique_ptr<Memory>& mem) { return acc + mem->n_reads(); });
+        size_t n_writes = std::ranges::fold_left(memories_, 0ULL,
+            [](size_t acc, const std::unique_ptr<Memory>& mem) { return acc + mem->n_writes(); });
+        return {.n_processors = context_->n_processors,
+            .n_rounds = n_rounds_,
+            .n_reads = n_reads,
+            .n_writes = n_writes};
     }
 
    private:

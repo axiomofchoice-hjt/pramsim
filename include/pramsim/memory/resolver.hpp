@@ -23,8 +23,8 @@ struct WriteRequest {
 };
 
 template <typename T>
-void check_read_write_conflict(
-    const std::vector<ReadRequest<T>>& read_requests, const std::vector<WriteRequest<T>>& write_requests) {
+void check_read_write_conflict(const std::vector<ReadRequest<T>>& read_requests,
+    const std::vector<WriteRequest<T>>& write_requests) {
     for (size_t i = 0, j = 0; i < read_requests.size() && j < write_requests.size();) {
         if (read_requests[i].internal_ref < write_requests[j].internal_ref) {
             i++;
@@ -75,7 +75,8 @@ template <typename T>
 void apply_arbitrary_write(const std::vector<WriteRequest<T>>& write_requests, Context* context) {
     for (size_t i = 0; i < write_requests.size();) {
         size_t j = i + 1;
-        while (j < write_requests.size() && write_requests[i].internal_ref == write_requests[j].internal_ref) {
+        while (j < write_requests.size() &&
+               write_requests[i].internal_ref == write_requests[j].internal_ref) {
             j++;
         }
         std::uniform_int_distribution<size_t> uniform(i, j - 1);
@@ -88,7 +89,8 @@ template <typename T>
 void apply_priority_write(const std::vector<WriteRequest<T>>& write_requests) {
     for (size_t i = 0; i < write_requests.size();) {
         size_t j = i + 1;
-        while (j < write_requests.size() && write_requests[i].internal_ref == write_requests[j].internal_ref) {
+        while (j < write_requests.size() &&
+               write_requests[i].internal_ref == write_requests[j].internal_ref) {
             j++;
         }
         *write_requests[i].internal_ref = write_requests[i].value;
@@ -97,7 +99,8 @@ void apply_priority_write(const std::vector<WriteRequest<T>>& write_requests) {
 }
 
 template <typename T>
-void apply_combining_write(const std::vector<WriteRequest<T>>& write_requests, const auto& combine_function) {
+void apply_combining_write(
+    const std::vector<WriteRequest<T>>& write_requests, const auto& combine_function) {
     for (size_t i : std::views::iota(size_t{0}, write_requests.size())) {
         if (i == 0 || write_requests[i].internal_ref != write_requests[i - 1].internal_ref) {
             *write_requests[i].internal_ref = write_requests[i].value;

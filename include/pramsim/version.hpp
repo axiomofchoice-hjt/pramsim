@@ -10,5 +10,6 @@ inline constexpr uint32_t version_major = 0;
 inline constexpr uint32_t version_minor = 2;
 inline constexpr uint32_t version_patch = 0;
 
-inline constexpr uint32_t version_number = (version_major * 10000) + (version_minor * 100) + version_patch;
+inline constexpr uint32_t version_number =
+    (version_major * 10000) + (version_minor * 100) + version_patch;
 }  // namespace pram

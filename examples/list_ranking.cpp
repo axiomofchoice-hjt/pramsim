@@ -65,8 +65,8 @@ void list_ranking_example() {
     std::println("result: {}", str(result));
     std::println("expected: {}", str(expected));
     pram::assert_or_throw(result == expected, "The result does not match expected values.");
-    std::println("n_processors: {}, rounds: {}, reads: {}, writes: {}", stat.n_processors, stat.n_rounds, stat.n_reads,
-        stat.n_writes);
+    std::println("n_processors: {}, rounds: {}, reads: {}, writes: {}", stat.n_processors,
+        stat.n_rounds, stat.n_reads, stat.n_writes);
 }
 
 int main() try {
