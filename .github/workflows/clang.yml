@@ -43,10 +43,21 @@ jobs:
 
   asan:
     runs-on: ubuntu-latest
+    # The examples are C++23 (<print>, std::ranges::to, std::views::enumerate) and need a toolchain
+    # the runner's default GCC does not provide, so pin one in a container instead of guessing.
+    container: gcc:15
 
     steps:
+      - name: Prepare container
+        run: |
+          command -v git >/dev/null || (apt-get update && apt-get install -y --no-install-recommends git)
+          git config --global --add safe.directory '*' || true
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: g++ --version
 
       - name: Build examples with AddressSanitizer
         run: |
