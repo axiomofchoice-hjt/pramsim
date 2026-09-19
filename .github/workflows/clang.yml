@@ -40,3 +40,30 @@ jobs:
       - name: Run clang-tidy
         run: |
           run-clang-tidy -p build
+
+  asan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build examples with AddressSanitizer
+        run: |
+          mkdir -p build-asan
+          for src in examples/*.cpp; do
+            name=$(basename "$src" .cpp)
+            g++ -std=c++23 -O1 -g -Iinclude \
+              -fsanitize=address -fsanitize-address-use-after-scope \
+              -Wall -Wextra -Wpedantic -Werror \
+              "$src" -o "build-asan/$name"
+          done
+
+      - name: Run examples under AddressSanitizer
+        env:
+          ASAN_OPTIONS: detect_stack_use_after_return=1
+        run: |
+          for bin in build-asan/*; do
+            echo "== $bin"
+            "$bin"
+          done

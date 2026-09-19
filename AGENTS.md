@@ -18,6 +18,10 @@ g++ examples/rank_sort.cpp -Iinclude -std=c++23 -Wall -Wextra -Wpedantic -Werror
 ## Verify / CI
 
 - No dedicated test suite — **examples are the verification**. Every `xmake run` exercises the examples.
+- CI also builds and runs every example under AddressSanitizer with
+  `-fsanitize=address -fsanitize-address-use-after-scope` and `ASAN_OPTIONS=detect_stack_use_after_return=1`.
+  Examples must stay ASan-clean: some bugs here are invisible at `-O2` and only surface once a stack slot is
+  reused.
 - CI runs `clang-format --dry-run --Werror` on all `*.cpp` and `*.h` files. Commit formatted code.
 - CI also runs `run-clang-tidy` against compile_commands.json in `build/`.
 - Always build with `-Wall -Wextra -Wpedantic -Werror` (xmake enforces this for examples).
@@ -38,6 +42,10 @@ g++ examples/rank_sort.cpp -Iinclude -std=c++23 -Wall -Wextra -Wpedantic -Werror
 - Reading shared memory: `array[index]`. Writing: `array.write(index, value)`. Writes are buffered and committed at the next `pram::step()`.
 - `pram::Stat` (from `machine.stat()`) tracks `n_processors`, `n_rounds`, `n_reads`, `n_writes`.
 - `pram::assert_or_throw(cond, msg)` is used throughout examples; throws `pram::assertion_error`.
+- Create tasks in `Machine::parallel` by calling `func(pid)` directly. Passing the callable through an adaptor
+  that stores a copy (`std::views::transform`, `std::function`, `std::bind`) breaks coroutines: the frame keeps a
+  pointer to the callable object, so that object must outlive every task it created. This is why `parallel` does
+  not use `views::transform`.
 
 ## Documentation
 
